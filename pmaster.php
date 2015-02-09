@@ -9,6 +9,16 @@
  	$menu 	= isset($_GET['menu'])?$_GET['menu']:'';
 	
 	switch ($aksi){
+	#tambah  ===================================================================================================
+			case 'tambah':
+				$tb = 'tb_'.substr($menu, 1);
+				$s  ='INSERT INTO '.$tb.' SET ';
+				foreach ($_POST as $i => $v) {
+					$s.=substr($i, 0,-2).'="'.$v.'",';
+				}
+				print_r($s);exit();
+			break;
+
 	#combo ===================================================================================================
 			case 'combo':
 				switch($menu){
@@ -450,7 +460,6 @@
 			case 'tampil' :
 				switch ($menu) {
 					case 'mpekerja':
-
 							$sql = 'SELECT
 										p.NIK,
 										p.id_pekerja,
@@ -540,8 +549,8 @@
 							 }
 							 echo "<tr><td colspan=7>".$obj->anchors."</td></tr>";
 							 echo "<tr><td colspan=7>".$obj->total."</td></tr>";
-								
 					break;
+
 					case 'mbagian':
 							if (isset($_GET['nama_bagian']) and !empty($_GET['nama_bagian'])){
 								$nama_bagian= $_GET['nama_bagian'];
