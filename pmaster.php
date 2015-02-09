@@ -2,17 +2,16 @@
 	include"lib/koneks.php";
 	include"lib/pagination_class.php";
  
- 	$aksi 	= $_GET['aksi'];
-	$menu	= $_GET['menu'];
-	$page 	= $_GET['page'];
-	$cari	= $_GET['cari'];
-	$tabel	= $_GET['tabel'];
+ 	$aksi 	= isset($_GET['aksi'])?$_GET['aksi']:'';
+ 	$page 	= isset($_GET['page'])?$_GET['page']:'';
+ 	$cari 	= isset($_GET['cari'])?$_GET['cari']:'';
+ 	$tabel 	= isset($_GET['tabel'])?$_GET['tabel']:'';
+ 	$menu 	= isset($_GET['menu'])?$_GET['menu']:'';
 	
 	switch ($aksi){
 	#combo ===================================================================================================
 			case 'combo':
-				switch($menu)
-				{
+				switch($menu){
 					case 'mpekerjas':
 						switch ($tabel)
 						{
@@ -450,6 +449,99 @@
 	#tampil =====================================================================================================
 			case 'tampil' :
 				switch ($menu) {
+					case 'mpekerja':
+
+							$sql = 'SELECT
+										p.NIK,
+										p.id_pekerja,
+										p.nama_pekerja,
+										p.jkelamin,
+										p.tgllahir,
+										j.nama_jabatan,
+										b.nama_bagian,
+										d.nama_department,
+										s.nama_statuskerja,
+										f.nama_shiftkerja,
+										p.tgl_masuk,
+										p.tgl_keluar
+									FROM
+										tb_pekerja p
+										LEFT JOIN tb_bagian b ON b.id_bagian = p.id_bagian
+										LEFT JOIN tb_department d ON d.id_department = p.id_department
+										LEFT JOIN tb_jabatan j ON j.id_jabatan = p.id_jabatan
+										LEFT JOIN tb_statuskerja s ON s.id_statuskerja = p.id_statuskerja
+										LEFT JOIN tb_shiftkerja f ON f.id_shiftkerja = p.id_shiftkerja
+									WHERE 
+										'.$_GET['kategori'].' LIKE "%'.$_GET['cari'].'%" 
+									ORDER BY '.$_GET['kategori'].' ASC'; 
+							if(isset($_GET['starting'])){ //nilai awal halaman
+								$starting=$_GET['starting'];
+							}else{
+								$starting=0;
+							}
+							
+							$recpage= 5;//jumlah data per halaman
+							$obj 	= new pagination_class($sql,$starting,$recpage);
+							$result =$obj->result;
+							
+							if(mysql_num_rows($result)!=0){
+								$nox 	= $starting+1;
+								while($r = mysql_fetch_array($result)){
+									echo"
+										<tr id='$r[id_pekerja]'>
+											<td><label class='checkbox '>
+											<input type='checkbox' id='CB$r[id_pekerja]'>
+											</label></td>
+											
+											<td class='to_hide_phone'> $nox </td>
+											<td class='to_hide_phone'> $r[NIK]</td>
+											<td class='to_hide_phone'> $r[nama_pekerja]</td>
+											<td class='to_hide_phone'> $r[jkelamin]</td>
+											<td class='to_hide_phone'> $r[tgllahir]</td>
+											<td class='to_hide_phone'> $r[nama_jabatan]</td>
+											<td class='to_hide_phone'> $r[nama_bagian]</td>
+											<td class='to_hide_phone'> $r[nama_department]</td>
+											<td class='to_hide_phone'> $r[nama_statuskerja]</td>
+											<td class='to_hide_phone'> $r[nama_shiftkerja]</td>
+											<td class='to_hide_phone'> $r[tgl_masuk]</td>
+											<td class='to_hide_phone'> $r[tgl_keluar]</td>
+											<td class='ms'>
+												
+												<div class='btn-group1'>
+													<a data-toggle='modal' href='#myModal' class='btn btn-small'  
+														rel='tooltip' data-placement='left' data-original-title=' Edit '>
+														<i idz='$r[id_pekerja]' class='gicon-edit'>
+															edit
+														</i>
+													</a> 
+													<a class='btn btn-small' rel='tooltip' data-placement='top' 
+														data-original-title='detail'>
+														<i idz='$r[id_pekerja]' class='gicon-eye-open'>
+															detail
+														</i>
+													</a> 
+													<a  class='btn target='_blank' btn-small' rel='tooltip' data-placement='bottom' 
+														data-original-title='hapus'>
+														<i idz='$r[id_pekerja]' namaz='$r[nama_bagian]'
+														class='gicon-remove'>
+															hapus
+														</i>
+													</a> 
+												</div>
+												
+											</td>
+										</tr>";
+										$nox++;
+								}
+							}else{
+								echo "<tr align='center'>
+										<td  colspan=7 ><span style='color:yellow;text-align:center;'>
+										... data tidak ditemukan ...</span></td></tr>";
+							 }
+							 echo "<tr><td colspan=7>".$obj->anchors."</td></tr>";
+							 echo "<tr><td colspan=7>".$obj->total."</td></tr>";
+								
+					break;
 					case 'mbagian':
 							if (isset($_GET['nama_bagian']) and !empty($_GET['nama_bagian'])){
 								$nama_bagian= $_GET['nama_bagian'];
@@ -753,22 +845,78 @@
 					break;
 					
 					case 'mstatuskerja':
-							if (isset($_GET['nama_statuskerja']) and !empty($_GET['nama_statuskerja'])){
-								$nama_statuskerja= $_GET['nama_statuskerja'];
-								$sql = "select * from tb_statuskerja
-										where nama_statuskerja like '%$nama_statuskerja%' order by id_statuskerja desc";
-							}
-							else if (isset($_GET['keterangan']) and !empty($_GET['keterangan'])){
-								$keterangan= $_GET['keterangan'];
-								$sql = "select * from tb_statuskerja 
-										where keterangan like '%$keterangan%' order by id_statuskerja desc";
-							}
-							else {
-								$sql = "select * from tb_statuskerja order by id_statuskerja desc";
-							}
+						if (isset($_GET['nama_statuskerja']) and !empty($_GET['nama_statuskerja'])){
+							$nama_statuskerja= $_GET['nama_statuskerja'];
+							$sql = "select * from tb_statuskerja
+									where nama_statuskerja like '%$nama_statuskerja%' order by id_statuskerja desc";
+						}
+						else if (isset($_GET['keterangan']) and !empty($_GET['keterangan'])){
+							$keterangan= $_GET['keterangan'];
+							$sql = "select * from tb_statuskerja 
+									where keterangan like '%$keterangan%' order by id_statuskerja desc";
+						}
+						else {
+							$sql = "select * from tb_statuskerja order by id_statuskerja desc";
+						}
 
-							if(isset($_GET['starting'])){ //nilai awal halaman
-								$starting=$_GET['starting'];
-							}else{
-								$starting=0;
-	
+						if(isset($_GET['starting'])){ //nilai awal halaman
+							$starting=$_GET['starting'];
+						}else{
+							$starting=0;
+						}
+
+						$recpage= 5;//jumlah data per halaman
+						$obj 	= new pagination_class($sql,$starting,$recpage);
+						$result =$obj->result;
+						
+						if(mysql_num_rows($result)!=0){
+							$nox 	= $starting+1;
+							while($departmentx = mysql_fetch_array($result)){
+								echo"
+									<tr id='department_$departmentx[id_department]'>
+										<td><label class='checkbox '>
+										<input type='checkbox' id='CB$departmentx[id_department]'>
+										</label></td>
+										
+										<td class='to_hide_phone'> $nox </td>
+										<td class='to_hide_phone'> $departmentx[nama_department]</td>
+										<td class='to_hide_phone'> $departmentx[keterangan]</td>
+										<td class='ms'>
+											
+											<div class='btn-group1'>
+												<a data-toggle='modal' href='#myModal' class='btn btn-small'  
+													rel='tooltip' data-placement='left' data-original-title=' Edit '>
+													<i idz='$departmentx[id_department]' class='gicon-edit'>
+														edit
+													</i>
+												</a> 
+												<a class='btn btn-small' rel='tooltip' data-placement='top' 
+													data-original-title='detail'>
+													<i idz='$departmentx[id_department]' class='gicon-eye-open'>
+														detail
+													</i>
+												</a> 
+												<a  class='btn target='_blank' btn-small' rel='tooltip' data-placement='bottom' 
+													data-original-title='hapus'>
+													<i idz='$departmentx[id_department]' namaz='$departmentx[nama_department]'
+													class='gicon-remove'>
+														hapus
+													</i>
+												</a> 
+											</div>
+											
+										</td>
+									</tr>";
+									$nox++;
+							}
+						}else{
+							echo "<tr align='center'>
+									<td  colspan=7 ><span style='color:yellow;text-align:center;'>
+									... data tidak ditemukan ...</span></td></tr>";
+						 }
+						 echo "<tr><td colspan=7>".$obj->anchors."</td></tr>";
+						 echo "<tr><td colspan=7>".$obj->total."</td></tr>";
+					break;
+				}
+			break;
+}

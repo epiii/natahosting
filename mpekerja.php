@@ -317,37 +317,38 @@
 		function loadData(){
 			$('#loadtabel').html('<img src="img/w8.gif">').fadeIn();
 			var dataString;
-			var cari 	= $("input#objekTB").val();
-			var combo 	= $("select#kategoriTB").val();
-			
-			if (combo == "nama_pekerja"){
-				dataString = 'nama_pekerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_shiftkerja"){
-				dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_statuskerja"){
-				dataString = 'nama_statuskerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_bagian"){
-				dataString = 'nama_bagian='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_department"){
-				dataString = 'nama_department='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "jkelamin"){
-				dataString = 'jkelamin='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_jabatan"){
-				dataString = 'nama_jabatan='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_shiftkerja"){
-				dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
-			}
+			var kategori = $("#kategoriTB").val();
+			var cari     = $("#objekTB").val();
+			// alert(kategori);replaceturn false;
+			dataString = 'kategori='+kategori+'&cari='+cari;			
+			// if (combo == "nama_pekerja"){
+			// 	dataString = 'nama_pekerja='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_shiftkerja"){
+			// 	dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_statuskerja"){
+			// 	dataString = 'nama_statuskerja='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_bagian"){
+			// 	dataString = 'nama_bagian='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_department"){
+			// 	dataString = 'nama_department='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "jkelamin"){
+			// 	dataString = 'jkelamin='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_jabatan"){
+			// 	dataString = 'nama_jabatan='+cari;//+'&random='+Math.random();
+			// }
+			// else if (combo == "nama_shiftkerja"){
+			// 	dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
+			// }
 			
 			$.ajax({
 				url	: "pmaster.php?aksi=tampil&menu=mpekerja",
-				type: "GET",
+				type: "GET",	
 				data: dataString,
 				success:function(data){
 					//$('#divPageData').html(data);
