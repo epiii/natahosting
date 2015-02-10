@@ -6,12 +6,12 @@
 <link href="css/style-page.css" rel="stylesheet" />        
 <a data-toggle="modal" id="tambahBC" class="btn btn-info btn-large">Tambah Data</a>
 <a id="cetakBC" class="btn btn-info btn-large" href="pcetak.php?tabelx=tb_pekerja&judulx=Pekerja" target="_blank">Cetak Semua</a>
-<button class="btn btn-warning" id="hapusBC">Kosongkan</button>
-	<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Hapus Antrian</a></li>
-            <li><a href="#">Cetak Antrian</a></li>
-        </ul>
+<button class="btn btn-warning btn-large" id="hapusBC">Kosongkan</button>
+	<!-- <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+	        <ul class="dropdown-menu">
+	            <li><a href="#">Hapus Antrian</a></li>
+	            <li><a href="#">Cetak Antrian</a></li>
+	        </ul> -->
         
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<a  type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src="img/delete2.png" width="50"></a>
@@ -175,10 +175,7 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
+                        <!-- <th class="jv no_sort"><label class="checkbox "><input type="checkbox"></label></th> -->
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">NIK</th>
                         <th class="to_hide_phone ue no_sort">Nama</th>
@@ -316,83 +313,53 @@
 		//fungai loading mode "normal"
 		function loadData(){
 			$('#loadtabel').html('<img src="img/w8.gif">').fadeIn();
-			var dataString;
-			var kategori = $("#kategoriTB").val();
-			var cari     = $("#objekTB").val();
-			// alert(kategori);replaceturn false;
-			dataString = 'kategori='+kategori+'&cari='+cari;			
-			// if (combo == "nama_pekerja"){
-			// 	dataString = 'nama_pekerja='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_shiftkerja"){
-			// 	dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_statuskerja"){
-			// 	dataString = 'nama_statuskerja='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_bagian"){
-			// 	dataString = 'nama_bagian='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_department"){
-			// 	dataString = 'nama_department='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "jkelamin"){
-			// 	dataString = 'jkelamin='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_jabatan"){
-			// 	dataString = 'nama_jabatan='+cari;//+'&random='+Math.random();
-			// }
-			// else if (combo == "nama_shiftkerja"){
-			// 	dataString = 'nama_shiftkerja='+cari;//+'&random='+Math.random();
-			// }
+			var kategori   = $("#kategoriTB").val();
+			var cari       = $("#objekTB").val();
+			var dataString = 'kategori='+kategori+'&cari='+cari;			
 			
 			$.ajax({
 				url	: "pmaster.php?aksi=tampil&menu=mpekerja",
 				type: "GET",	
 				data: dataString,
 				success:function(data){
-					//$('#divPageData').html(data);
 					$("#loadtabel").fadeOut(1000);
 					$('#isi').hide().html(data).fadeIn(1000);
 				}
 			});
 		}
 		
+//paging ---
+    function xpagination(page,aksix,subaksi){ 
+        var aksi ='aksi='+aksix+'&subaksi='+subaksi+'&starting='+page;
+        var cari ='';
+        $('.'+subaksi+'_cari').each(function(){
+            var p = $(this).attr('id');
+            var v = $(this).val();
+            cari+='&'+p+'='+v;
+        });
+        $.ajax({
+            url:dir,
+            type:"post",
+            data: aksi+cari,
+            beforeSend:function(){
+                $('#'+subaksi+'tbody').html('<tr><td align="center" colspan="8"><img src="img/w8loader.gif"></td></tr></center>');
+            },success:function(dt){
+                setTimeout(function(){
+                    $('#'+subaksi+'tbody').html(dt).fadeIn();
+                },1000);
+            }
+        });
+    }
+//end of paging ---
+
 		//fungsi loading mode "paging"
 		var page;
 		function pagination(page){
 			$('#loadtabel').html('<img src="img/w8.gif">').fadeIn();
-			var cari = $("input#objekTB").val();
-			var combo = $("select#kategoriTB").val();
-			
-			if (combo == "nama_pekerja"){
-				dataString = 'starting='+page+'&nama_pekerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_shiftkerja"){
-				dataString = 'starting='+page+'&nama_shiftkerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_statuskerja"){
-				dataString = 'starting='+page+'&nama_statuskerja='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_bagian"){
-				dataString = 'starting='+page+'&nama_bagian='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_department"){
-				dataString = 'starting='+page+'&nama_department='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "jkelamin"){
-				dataString = 'starting='+page+'&jkelamin='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_jabatan"){
-				dataString = 'starting='+page+'&nama_jabatan='+cari;//+'&random='+Math.random();
-			}
-			else if (combo == "nama_shiftkerja"){
-				dataString = 'starting='+page+'&nama_shiftkerja='+cari;//+'&random='+Math.random();
-			}
-			else{
-				dataString = 'starting='+page;//+'&random='+Math.random();
-			}
-			
+			var kategori   = $("#kategoriTB").val();
+			var cari       = $("#objekTB").val();
+			dataString = 'starting='+page+'&kategori='+kategori+'&cari='+cari;
+
 			$.ajax({
 				url:"pmaster.php?aksi=tampil&menu=mpekerja",
 				data: dataString,
@@ -433,6 +400,7 @@
 			}
 			return false;
 		});
+
 		//cari objekTB
 		$("#objekTB").keyup(function(){
 			var cari = $("input#objekTB").val();
@@ -489,15 +457,11 @@
 		
 		//simpan(tambah & edit)
 		$('#pekerjaFR').submit(function() {
-			//var data2 = $().val
 			var idformx = $("#idform").val();
-			var urlx = $(this).attr('action');
+			var urlx    = $(this).attr('action');
+			urlx2       = "?aksi=simpan&menu=mpekerja";
 
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mpekerja";
-			}else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mpekerja&idx="+idformx;
-			}
+			if(idformx!='') urlx2 += "&idx="+idformx;
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',
@@ -596,28 +560,28 @@
 		
 		//action detail
 		$('i.gicon-eye-open').live("click",function() {	
-			var idy = $(this).attr("idz");
-			var namay= $(this).attr("namaz");
-			var keterangany= $(this).attr("keteranganz");
-			
+      var idy         = $(this).attr("idz");
+      var namay       = $(this).attr("namaz");
+      var keterangany = $(this).attr("keteranganz");
+      
 			$.ajax({
 				type:"GET",
 				dataType:'json',
 				url:"pmaster.php",
 				data:"aksi=cetak&menu=mpekerja&idx="+idy,//+"&namax="+namay+"&keteranganx="+keterangany,
 				success:function(data){
-					var nama_pekerjay 	= data.nama_pekerja;
-					var jkelaminy		= data.jkelamin;
-					var tgllahiry		= data.tgllahir;
-					var alamaty			= data.alamat;
-					var kotay			= data.kota;
-					var jabatany		= data.jabatan;
-					var bagiany			= data.bagian;
-					var departmenty		= data.department;
-					var statuskerjay	= data.statuskerja;
-					var shiftkerjay		= data.shiftkerja;
-					var tglmasuky		= data.tglmasuk;
-					var tglkeluary		= data.tglkeluar;
+          var nama_pekerjay = data.nama_pekerja;
+          var jkelaminy     = data.jkelamin;
+          var tgllahiry     = data.tgllahir;
+          var alamaty       = data.alamat;
+          var kotay         = data.kota;
+          var jabatany      = data.jabatan;
+          var bagiany       = data.bagian;
+          var departmenty   = data.department;
+          var statuskerjay  = data.statuskerja;
+          var shiftkerjay   = data.shiftkerja;
+          var tglmasuky     = data.tglmasuk;
+          var tglkeluary    = data.tglkeluar;
 					
 					var bodyy		='';
 						bodyy		+='<div align=center><b>Pekerja</b></div>';

@@ -7,17 +7,21 @@
  	$cari 	= isset($_GET['cari'])?$_GET['cari']:'';
  	$tabel 	= isset($_GET['tabel'])?$_GET['tabel']:'';
  	$menu 	= isset($_GET['menu'])?$_GET['menu']:'';
+	$tb  	= 'tb_'.substr($menu, 1);
+	$id 	= 'id_'.substr($menu, 1);
 	
 	switch ($aksi){
 	#tambah  ===================================================================================================
-			case 'tambah':
-				$tb = 'tb_'.substr($menu, 1);
-				$s  ='INSERT INTO '.$tb.' SET ';
-				foreach ($_POST as $i => $v) {
-					$s.=substr($i, 0,-2).'="'.$v.'",';
-				}
-				print_r($s);exit();
-			break;
+		case 'simpan':
+			$arr = array();
+			foreach ($_POST as $i => $v) {
+				$arr[]=substr($i, 0,-2).'="'.$v.'"';
+			}$f   = implode(',', $arr);
+			$s    = isset($_GET['idx'])?'UPDATE '.$tb.' SET '.$f.' WHERE '.$id.'='.$_GET['idx']:'INSERT INTO '.$tb.' SET '.$f;
+			$e    = mysql_query($s);
+			$stat = $e?'sukses':'gagal simpan ('.mysql_error().')'; 
+			echo json_encode(array('status'=>$stat));
+		break;
 
 	#combo ===================================================================================================
 			case 'combo':
@@ -171,43 +175,37 @@
 							echo '{"nama_statuskerja":"'.$cetakR['nama_statuskerja'].'"}';
 							exit();
 					break;
-					case 'mpekerja':
-							$kue="	select * 
-									from 
-										tb_pekerja p, 
-										tb_bagian b, 
-										tb_jabatan j, 
-										tb_department d, 
-										tb_statuskerja s, 
-										tb_shiftkerja f
-										
-									where 
-										p.NIK = '$_GET[idx]' and 
-										b.id_bagian= p.id_bagian and 
-										j.id_jabatan= p.id_jabatan and 
-										d.id_department = p.id_department and 
-										s.id_statuskerja= p.id_statuskerja and 
-										f.id_shiftkerja= p.id_shiftkerja ";
-							$jalan	= mysql_query($kue)or die("kueri cetak shift kerja ERROR");
-							$cetakR = mysql_fetch_assoc($jalan);
-							echo '{
-									"nama_pekerja":"'.$cetakR['nama_pekerja'].'",
-									"jkelamin":"'.$cetakR['jkelamin'].'",
-									"tgllahir":"'.$cetakR['tgllahir'].'",
-									"alamat":"'.$cetakR['alamat'].'",
-									"kota":"'.$cetakR['kota'].'",
-									"jabatan":"'.$cetakR['nama_jabatan'].'",
-									"bagian":"'.$cetakR['nama_bagian'].'",
-									"department":"'.$cetakR['nama_department'].'",
-									"statuskerja":"'.$cetakR['nama_statuskerja'].'",
-									"shiftkerja":"'.$cetakR['nama_shiftkerja'].'",
-									"tglmasuk":"'.$cetakR['tgl_masuk'].'",
-									"tglkeluar":"'.$cetakR['tgl_keluar'].'"
-								}';
-							//exit();
-					break;
-	
-					}
+					// case 'mpekerja':
+					// 		$kue= 'SELECT
+					// 					*
+					// 				FROM
+					// 					tb_pekerja p
+					// 					LEFT JOIN tb_bagian b ON b.id_bagian = p.id_bagian
+					// 					LEFT JOIN tb_jabatan j ON j.id_jabatan = p.id_jabatan
+					// 					LEFT JOIN tb_department d ON d.id_department = p.id_department
+					// 					LEFT JOIN tb_statuskerja s ON s.id_statuskerja = p.id_statuskerja
+					// 					LEFT JOIN tb_shiftkerja f ON f.id_shiftkerja = p.id_shiftkerja
+					// 				WHERE
+					// 					p.id_pekerja = '.$_GET['idx'];
+					// 		$jalan  = mysql_query($kue)or die("kueri cetak shift kerja ERROR");
+					// 		$cetakR = mysql_fetch_assoc($jalan);
+					// 		$out    = array(
+					// 					'nama_pekerja' =>$cetakR['nama_pekerja'],
+					// 					'jkelamin'     =>$cetakR['jkelamin'],
+					// 					'tgllahir'     =>$cetakR['tgllahir'],
+					// 					'alamat'       =>$cetakR['alamat'],
+					// 					'kota'         =>$cetakR['kota'],
+					// 					'jabatan'      =>$cetakR['nama_jabatan'],
+					// 					'bagian'       =>$cetakR['nama_bagian'],
+					// 					'department'   =>$cetakR['nama_department'],
+					// 					'statuskerja'  =>$cetakR['nama_statuskerja'],
+					// 					'shiftkerja'   =>$cetakR['nama_shiftkerja'],
+					// 					'tglmasuk'     =>$cetakR['tgl_masuk'],
+					// 					'tglkeluar'    =>$cetakR['tgl_keluar']
+					// 				);
+					// 		echo json_encode($out); 
+					// break;
+				}
 
 	#ambil edit =====================================================================================================				
 			case 'ambiledit':
@@ -482,7 +480,8 @@
 										LEFT JOIN tb_shiftkerja f ON f.id_shiftkerja = p.id_shiftkerja
 									WHERE 
 										'.$_GET['kategori'].' LIKE "%'.$_GET['cari'].'%" 
-									ORDER BY '.$_GET['kategori'].' ASC'; 
+									ORDER BY 
+										'.$_GET['kategori'].' ASC'; 
 							if(isset($_GET['starting'])){ //nilai awal halaman
 								$starting=$_GET['starting'];
 							}else{
@@ -498,10 +497,6 @@
 								while($r = mysql_fetch_array($result)){
 									echo"
 										<tr id='$r[id_pekerja]'>
-											<td><label class='checkbox '>
-											<input type='checkbox' id='CB$r[id_pekerja]'>
-											</label></td>
-											
 											<td class='to_hide_phone'> $nox </td>
 											<td class='to_hide_phone'> $r[NIK]</td>
 											<td class='to_hide_phone'> $r[nama_pekerja]</td>
