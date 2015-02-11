@@ -6,12 +6,7 @@
 <link href="css/style-page.css" rel="stylesheet" />        
 <a data-toggle="modal" id="tambahBC" href="#myModal" class="btn btn-info btn-large">Tambah Data</a>
 <a id="cetakBC" class="btn btn-info btn-large" href="pcetak.php?tabelx=tb_jlampiran&judulx=Jenis Lampiran" target="_blank">Cetak Semua</a>
-<button class="btn btn-warning" id="hapusBC">Kosongkan</button>
-	<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Hapus Antrian</a></li>
-            <li><a href="#">Cetak Antrian</a></li>
-        </ul>
+<button class="btn btn-warning btn-large" id="hapusBC">Kosongkan</button>
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<a  type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src="img/delete2.png" width="50"></a>
 		<div class="modal-body">
@@ -24,7 +19,7 @@
 			  <form class="form-horizontal cmxform" id="validateForm" method="get" action="pmaster.php" autocomplete="off">
               	<input type="hidden" id="idform" />
                 <div class="form-row control-group row-fluid">
-                  <label class="control-label span3">jlampiran </label>
+                  <label class="control-label span3">Jenis Lampiran </label>
                   <div class="controls span7">
                     <input id="cname" name="nama_jlampiranTB" placeholder="nama jlampiran (wajib diisi)" type="text" required class="span12"/>
                   </div>
@@ -59,7 +54,7 @@
             <h4> <span>Data Master - Jenis Lampiran </span>
            </h4>&nbsp;
 				<select id="kategoriTB">
-					<option value="nama_jlampiran" selected="selected">nama jlampiran</option>
+					<option value="nama_jlampiran" selected="selected">Nama jlampiran</option>
 					</select>
                 &nbsp;
 				<input type="text" id="objekTB" placeholder="pencarian">
@@ -72,12 +67,8 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
-                        <th class="to_hide_phone ue no_sort">jlampiran</th>
+                        <th class="to_hide_phone ue no_sort">Jenis Lampiran</th>
                       
                         <th class="ms no_sort ">aksi</th>
                     </tr>
@@ -251,12 +242,9 @@
 			var idformx = $("#idform").val();
 			var urlx = $(this).attr('action');
 
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mjlampiran";
-			}
-			else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mjlampiran&idx="+idformx;
-			}
+			urlx2       = "?aksi=simpan&menu=mjlampiran";
+			if(idformx!='') urlx2 += "&idx="+idformx;
+
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',
@@ -293,7 +281,7 @@
 							$("#jlampiran_"+idy).css("background","blue");
 							$("#loadtabel").html('update <br> jlampiran : "'+namay+'" <br> keterangan : '+keterangany).fadeIn(6000);
 							loadData();
-						}
+						}$('#myModal').modal('hide');
 					}else{
 						alert('gagal menyimpan operasi database');
 						}

@@ -73,10 +73,6 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">statuskerja</th>
                       
@@ -250,14 +246,10 @@
 		//simpan(tambah & edit)
 		$('#validateForm').submit(function() {
 			var idformx = $("#idform").val();
-			var urlx = $(this).attr('action');
-
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mstatuskerja";
-			}
-			else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mstatuskerja&idx="+idformx;
-			}
+			var urlx    = $(this).attr('action');
+			urlx2       = "?aksi=simpan&menu=mstatuskerja";
+			if(idformx !='') urlx2 += "&idx="+idformx;
+			
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',

@@ -254,55 +254,55 @@
       $('#myModal').modal('show');
     });
     //end of tambah 
-
-    //action hapus 
-    $('i.gicon-remove').live("click",function() { 
-      var idy = $(this).attr("idz");
-      var namay= $(this).attr("namaz");
-      if(confirm("lanjutkan menghapus '"+namay+"' ?"))
-        $.ajax({
-            type: "GET",
-            dataType:"json",
-            url: "pmaster.php?aksi=hapus&menu=mpekerja",
-            data:"idx=" + idy,
-            cache: false,
-            success: function(data){
-              var statusy   = data.status;
-              var namay     = data.nama_pekerja;
-                
-              $("#mpekerja_"+idy).css("background","red").fadeOut(2000);
-              loadData();
-              $("#loadtabel").html('mpekerja : "'+namay+'" terhapus').fadeIn(6000);
-            }
-        });
-    });
-    //end of action hapus 
-
-    //hapus semua
-    $('#hapusBC').click(function() {
-      if(confirm("lanjutkan menghapus semua data pekerja ?"))
-        $.ajax({
-            type: "GET",
-            dataType:'json',
-            url: "pmaster.php",
-            data:"aksi=hapussemua&menu=mpekerja",
-            success: function(data){
-              if(data.status=='sukses'){
-                loadData();}
-              else{
-                alert('terjadi kesalahan pada proses database');}
-            }
-        });
-    });
-
   });
+
+  //hapus semua
+  function hapusSemua(){
+    if(confirm("lanjutkan menghapus semua data pekerja ?"))
+      $.ajax({
+          type: "GET",
+          dataType:'json',
+          url: "pmaster.php",
+          data:"aksi=hapussemua&menu=mpekerja",
+          success: function(data){
+            if(data.status=='sukses'){
+              loadData();}
+            else{
+              alert('terjadi kesalahan pada proses database');}
+          }
+      });
+  }
+
+  function hapus(idy){  
+    var namay= $(this).attr("namaz");
+    if(confirm("lanjutkan menghapus '"+namay+"' ?"))
+      $.ajax({
+          type: "GET",
+          dataType:"json",
+          url: "pmaster.php?aksi=hapus&menu=mpekerja",
+          data:"idx=" + idy,
+          cache: false,
+          success: function(data){
+            if(data.status=='gagal'){
+              alert('gagal hapus');
+            }else{
+              $("#mpekerja_"+idy).attr('style','background-color:red;').fadeOut(2000);
+              setTimeout(function(){
+                loadData();
+                $("#loadtabel").html('mpekerja : "'+idy+'" terhapus').fadeIn(6000);
+              },1000);
+            }
+          }
+      });
+
+  }
 
   function simpan(){
       var idformx = $("#idform").val();
       var urlx    = $(this).attr('action');
       urlx2       = "?aksi=simpan&menu=mpekerja";
-
       if(idformx!='') urlx2 += "&idx="+idformx;
+
       $('#hasily').html("loading ....");
       $.ajax({
         type: 'POST',
@@ -345,7 +345,7 @@
 			success:function(data){
 				var optiony = '';
 				$.each(data, function(id,item){
-          if(item.id_jabatn==id_j)
+          if(item.id_jabatan==id_j)
             optiony+='<option selected="selected" value='+item.id_jabatan+'>'+item.nama_jabatan+'</option>';
           else
             optiony+='<option value='+item.id_jabatan+'>'+item.nama_jabatan+'</option>';
@@ -391,7 +391,7 @@
     });
   }
 		
-	function combostatuskerja(){
+	function combostatuskerja(id_s){
 		$.ajax({
 			url:'pmaster.php',
 			type:'get',
@@ -400,14 +400,17 @@
 			success:function(data){
 				var optiony = '';
 				$.each(data, function(id,item){
-					optiony+='<option value='+item.id_statuskerja+'>'+item.nama_statuskerja+'</option>';
+          if(item.id_statuskerja==id_s)
+            optiony+='<option selected="selected" value='+item.id_statuskerja+'>'+item.nama_statuskerja+'</option>';
+          else
+            optiony+='<option value='+item.id_statuskerja+'>'+item.nama_statuskerja+'</option>';
 				});
 				$('#id_statuskerjaTB').html('<option value=>Pilih Status Kerja</option>'+optiony);
 	    }
     });
   }
 
-	function comboshiftkerja(){
+	function comboshiftkerja(id_s){
 		$.ajax({
 			url:'pmaster.php',
 			type:'get',
@@ -416,7 +419,10 @@
 			success:function(data){
 				var optiony = '';
 				$.each(data, function(id,item){
-					optiony+='<option value='+item.id_shiftkerja+'>'+item.nama_shiftkerja+'</option>';
+          if(item.id_shiftkerja==id_s)
+            optiony+='<option selected="selected" value='+item.id_shiftkerja+'>'+item.nama_shiftkerja+'</option>';
+          else
+            optiony+='<option value='+item.id_shiftkerja+'>'+item.nama_shiftkerja+'</option>';
 				});
 				$('#id_shiftkerjaTB').html('<option value=>Pilih Shift Kerja</option>'+optiony);
   		}
@@ -500,14 +506,14 @@
           $("#tgllahirTB").val(dt.tgllahir);
           $("#alamatTB").val(dt.alamat);
           $("#kotaTB").val(dt.kota);
+          $("#tgl_masukTB").val(dt.tgl_masuk);
+          $("#tgl_keluarTB").val(dt.tgl_keluar);
           
           combobagian(dt.id_bagian);
           combojabatan(dt.id_jabatan);
           combodepartment(dt.id_department);
-          combostatukerja(dt.id_statuskerja);
+          combostatuskerja(dt.id_statuskerja);
           comboshiftkerja(dt.id_shiftkerja);
-          $("#tgl_masukTB").val(dt.tgl_masuk);
-          $("#tgl_keluarTB").val(dt.tgl_keluar);
           $("#simpanBC").html('Update');
           $('#myModal').modal('show');
         }else{

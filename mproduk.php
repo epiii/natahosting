@@ -6,12 +6,7 @@
 <link href="css/style-page.css" rel="stylesheet" />        
 <a data-toggle="modal" id="tambahBC" href="#myModal" class="btn btn-info btn-large">Tambah Data</a>
 <a id="cetakBC" class="btn btn-info btn-large" href="pcetak.php?tabelx=tb_produk&judulx=Jenis Produk " target="_blank">Cetak Semua</a>
-<button class="btn btn-warning" id="hapusBC">Kosongkan</button>
-	<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Hapus Antrian</a></li>
-            <li><a href="#">Cetak Antrian</a></li>
-        </ul>
+<button class="btn btn-large btn-warning" id="hapusBC">Kosongkan</button>
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<a  type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src="img/delete2.png" width="50"></a>
 		<div class="modal-body">
@@ -27,7 +22,7 @@
                 <div class="form-row control-group row-fluid">
                   <label class="control-label span3">nama produk </label>
                   <div class="controls span7">
-                    <input id="cname" name="nama_produkTB" placeholder="nama produk(wajib diisi)" type="text" required class="span12"/>
+                    <input id="nama_produkTB" name="nama_produkTB" placeholder="nama produk(wajib diisi)" type="text" required class="span12"/>
                   </div>
                 </div>
                 
@@ -74,10 +69,6 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">Produk</th>
                         <th class="ms no_sort ">aksi</th>
@@ -245,12 +236,9 @@
 			var idformx = $("#idform").val();
 			var urlx = $(this).attr('action');
 
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mproduk";
-			}
-			else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mproduk&idx="+idformx;
-			}
+			urlx2       = "?aksi=simpan&menu=mproduk";
+			if(idformx!='') urlx2 += "&idx="+idformx;
+
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',
@@ -288,7 +276,7 @@
 							$("#produk_"+idy).css("background","blue");
 							$("#loadtabel").html('update <br> produk : "'+namay+'" <br>').fadeIn(6000);
 							loadData();
-						}
+						}$('#myModal').modal('hide');
 					}else{
 						alert('gagal menyimpan operasi database');
 						}
@@ -303,8 +291,6 @@
 		$('i.gicon-edit').live("click",function() {	
 			$("#titlex").html(' <h4><span align=center><b>Edit Data</b></span><h4>');
 			var idy = $(this).attr("idz");
-			//var namay= $(this).attr("namaz");
-			//var keterangany= $(this).attr("keteranganz");
 			
 			$.ajax({
 				url:"pmaster.php?aksi=ambiledit&menu=mproduk",
@@ -312,11 +298,9 @@
 				dataType:'json',
 				type:"GET",
 				success:function(data){
-					var statusy		= data.status;
-					var namay 		= data.nama_produk;
-					if(statusy=='sukses'){
+					if(data.status=='sukses'){
 						$("#idform").val(idy);
-						$("#cname").val(namay);
+						$("#nama_produkTB").val(data.nama_produk);
 						$("#simpanBC").html('Update');
 					}else{
 						alert('terjadi kesalahan pada database');

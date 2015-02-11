@@ -81,10 +81,6 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">department</th>
                         <th class="to_hide_phone ue no_sort">keterangan</th>

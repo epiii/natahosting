@@ -170,7 +170,7 @@
                 <!--<li><a class="menu"href="?hlm=<?php #echo enkrip('mjkecel')?>">Jenis Kecelakaan</a></li>-->
                 <li><a class="menu"href="?hlm=<?php echo enkrip('mjcidera')?>">Jenis Cidera</a></li>
                 <li><a class="menu"href="?hlm=<?php echo enkrip('mbagtubuh')?>">Bagian Tubuh</a></li>
-                <li><a class="menu"href="?hlm=<?php echo enkrip('mnilairesiko')?>">Nilai Resiko</a></li>
+                <!-- <li><a class="menu"href="?hlm=<?php echo enkrip('mnilairesiko')?>">Nilai Resiko</a></li> -->
                 
                 <li><a class="menu"href="?hlm=<?php echo enkrip('mkatinvestigasi')?>">Kategori Investigasi</a></li>
                 <li><a class="menu"href="?hlm=<?php echo enkrip('mjlampiran')?>">Jenis Lampiran</a></li>

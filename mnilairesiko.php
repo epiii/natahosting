@@ -80,10 +80,6 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">nilairesiko</th>
                         <th class="to_hide_phone ue no_sort">keterangan</th>
@@ -259,12 +255,9 @@
 			var idformx = $("#idform").val();
 			var urlx = $(this).attr('action');
 
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mnilairesiko";
-			}
-			else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mnilairesiko&idx="+idformx;
-			}
+			urlx2       = "?aksi=simpan&menu=mnilairesiko";
+			if(idformx!='') urlx2 += "&idx="+idformx;
+
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',

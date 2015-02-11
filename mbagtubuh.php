@@ -6,12 +6,7 @@
 <link href="css/style-page.css" rel="stylesheet" />        
 <a data-toggle="modal" id="tambahBC" class="btn btn-info btn-large">Tambah Data</a>
 <a id="cetakBC" class="btn btn-info btn-large" href="pcetak.php?tabelx=tb_bagtubuh&judulx=Bagian Tubuh" target="_blank">Cetak Semua</a>
-<button class="btn btn-warning" id="hapusBC">Kosongkan</button>
-	<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            <li><a href="#">Hapus Antrian</a></li>
-            <li><a href="#">Cetak Antrian</a></li>
-        </ul>
+<button class="btn btn-warning btn-large" id="hapusBC">Kosongkan</button>
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<a  type="button" class="close" data-dismiss="modal" aria-hidden="true"><img src="img/delete2.png" width="50"></a>
 		<div class="modal-body">
@@ -81,10 +76,6 @@
             	style="width:100%;margin-bottom:0; ">
                 <thead>
                     <tr>
-                        <th class="jv no_sort">
-                            <label class="checkbox ">
-	                            <input type="checkbox">
-                            </label></th>
                         <th class="to_hide_phone  no_sort">no</th>
                         <th class="to_hide_phone ue no_sort">bagtubuh</th>
                         <th class="to_hide_phone ue no_sort">keterangan</th>
@@ -261,12 +252,9 @@
 			var idformx = $("#idform").val();
 			var urlx = $(this).attr('action');
 
-			if(idformx==''){ //tmbah data
-				urlx2 = "?aksi=tambah&menu=mbagtubuh";
-			}
-			else{ //edit data
-				urlx2 = "?aksi=ubah&menu=mbagtubuh&idx="+idformx;
-			}
+			urlx2       = "?aksi=simpan&menu=mbagtubuh";
+			if(idformx!='') urlx2 += "&idx="+idformx;
+
 			$('#hasily').html("loading ....");
 			$.ajax({
 				type: 'POST',
