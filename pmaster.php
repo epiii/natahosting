@@ -1,6 +1,8 @@
  <?php
-	include"lib/koneks.php";
-	include"lib/pagination_class.php";
+ 	session_start();
+	require_once"lib/koneks.php";
+	require_once"lib/pagination_class.php";
+  	require_once 'lib/tglindo.php';
  
  	$aksi 	= isset($_GET['aksi'])?$_GET['aksi']:'';
  	$page 	= isset($_GET['page'])?$_GET['page']:'';
@@ -175,36 +177,6 @@
 							echo '{"nama_statuskerja":"'.$cetakR['nama_statuskerja'].'"}';
 							exit();
 					break;
-					// case 'mpekerja':
-					// 		$kue= 'SELECT
-					// 					*
-					// 				FROM
-					// 					tb_pekerja p
-					// 					LEFT JOIN tb_bagian b ON b.id_bagian = p.id_bagian
-					// 					LEFT JOIN tb_jabatan j ON j.id_jabatan = p.id_jabatan
-					// 					LEFT JOIN tb_department d ON d.id_department = p.id_department
-					// 					LEFT JOIN tb_statuskerja s ON s.id_statuskerja = p.id_statuskerja
-					// 					LEFT JOIN tb_shiftkerja f ON f.id_shiftkerja = p.id_shiftkerja
-					// 				WHERE
-					// 					p.id_pekerja = '.$_GET['idx'];
-					// 		$jalan  = mysql_query($kue)or die("kueri cetak shift kerja ERROR");
-					// 		$cetakR = mysql_fetch_assoc($jalan);
-					// 		$out    = array(
-					// 					'nama_pekerja' =>$cetakR['nama_pekerja'],
-					// 					'jkelamin'     =>$cetakR['jkelamin'],
-					// 					'tgllahir'     =>$cetakR['tgllahir'],
-					// 					'alamat'       =>$cetakR['alamat'],
-					// 					'kota'         =>$cetakR['kota'],
-					// 					'jabatan'      =>$cetakR['nama_jabatan'],
-					// 					'bagian'       =>$cetakR['nama_bagian'],
-					// 					'department'   =>$cetakR['nama_department'],
-					// 					'statuskerja'  =>$cetakR['nama_statuskerja'],
-					// 					'shiftkerja'   =>$cetakR['nama_shiftkerja'],
-					// 					'tglmasuk'     =>$cetakR['tgl_masuk'],
-					// 					'tglkeluar'    =>$cetakR['tgl_keluar']
-					// 				);
-					// 		echo json_encode($out); 
-					// break;
 				}
 
 	#ambil edit =====================================================================================================				
@@ -233,28 +205,31 @@
 									}';
 						exit();
 					break;
+
 					case 'mpekerja':
-							$jalan	= 	mysql_query("select * from tb_pekerja where id_pekerja= '$_GET[idx]'")
-										or die("kueri cetak pekerja ERROR");
-							$ambilR = 	mysql_fetch_assoc($jalan);
-							echo '{
-									"status":"sukses",
-									"NIK":"'.$ambilR['NIK'].'",
-									"nama_pekerja":"'.$ambilR['nama_pekerja'].'",
-									"jkelamin":"'.$ambilR['jkelamin'].'",
-									"tgllahir":"'.$ambilR['tgllahir'].'",
-									"alamat":"'.$ambilR['alamat'].'",
-									"kota":"'.$ambilR['kota'].'",
-									"id_jabatan":"'.$ambilR['id_jabatan'].'",
-									"id_bagian":"'.$ambilR['id_bagian'].'",
-									"id_department":"'.$ambilR['id_department'].'",
-									"id_statuskerja":"'.$ambilR['id_statuskerja'].'",
-									"id_shiftkerja":"'.$ambilR['id_shiftkerja'].'",
-									"tgl_masuk":"'.$ambilR['tgl_masuk'].'",
-									"tgl_keluar":"'.$ambilR['tgl_keluar'].'"
-									}';
-						exit();
+						$s    = 'SELECT * FROM  tb_pekerja WHERE  id_pekerja= '.$_GET['idx'];
+						$e    = mysql_query($s);
+						$stat = $e?'sukses':'gagal'.mysql_error();
+						$r    = mysql_fetch_assoc($e);
+						$out  = array(
+									'status'         =>$stat,
+									'NIK'            =>$r['NIK'],
+									'nama_pekerja'   =>$r['nama_pekerja'],
+									'jkelamin'       =>$r['jkelamin'],
+									'tgllahir'       =>$r['tgllahir'],
+									'alamat'         =>$r['alamat'],
+									'kota'           =>$r['kota'],
+									'id_jabatan'     =>$r['id_jabatan'],
+									'id_bagian'      =>$r['id_bagian'],
+									'id_department'  =>$r['id_department'],
+									'id_statuskerja' =>$r['id_statuskerja'],
+									'id_shiftkerja'  =>$r['id_shiftkerja'],
+									'tgl_masuk'      =>$r['tgl_masuk'],
+									'tgl_keluar'     =>$r['tgl_keluar']
+								);
+						echo json_encode($out);
 					break;
+
 					case 'mshift':
 							$jalan	= 	mysql_query("select * from tb_shiftkerja where id_shiftkerja = '$_GET[idx]'")
 										or die("kueri cetak shift kerja ERROR");
@@ -491,7 +466,7 @@
 							$recpage= 5;//jumlah data per halaman
 							$obj 	= new pagination_class($sql,$starting,$recpage);
 							$result =$obj->result;
-							
+							// var_dump($_SESSION);exit();
 							if(mysql_num_rows($result)!=0){
 								$nox 	= $starting+1;
 								while($r = mysql_fetch_array($result)){
@@ -507,27 +482,22 @@
 											<td class='to_hide_phone'> $r[nama_department]</td>
 											<td class='to_hide_phone'> $r[nama_statuskerja]</td>
 											<td class='to_hide_phone'> $r[nama_shiftkerja]</td>
-											<td class='to_hide_phone'> $r[tgl_masuk]</td>
-											<td class='to_hide_phone'> $r[tgl_keluar]</td>
+											<td class='to_hide_phone'> ".tgl_indo($r['tgl_masuk'])."</td>
+											<td class='to_hide_phone'> ".tgl_indo($r['tgl_keluar'])."</td>
 											<td class='ms'>
 												
 												<div class='btn-group1'>
-													<a data-toggle='modal' href='#myModal' class='btn btn-small'  
+													<a onclick='edit(".$r['id_pekerja'].");' xhref='#myModal' class='btn btn-small'  
 														rel='tooltip' data-placement='left' data-original-title=' Edit '>
-														<i idz='$r[id_pekerja]' class='gicon-edit'>
+														<i namez='$r[nama_pekerja]'>
 															edit
 														</i>
 													</a> 
-													<a class='btn btn-small' rel='tooltip' data-placement='top' 
-														data-original-title='detail'>
-														<i idz='$r[id_pekerja]' class='gicon-eye-open'>
-															detail
-														</i>
+													<a target='_blank' href='report/r_mpekerja.php?token=".base64_encode($r['id_pekerja'].$_SESSION['namauser'].$_SESSION['passuser'])."&idx=".$r['id_pekerja']."' class='btn target='_blank' btn-small'>
+														detail
 													</a> 
-													<a  class='btn target='_blank' btn-small' rel='tooltip' data-placement='bottom' 
-														data-original-title='hapus'>
-														<i idz='$r[id_pekerja]' namaz='$r[nama_bagian]'
-														class='gicon-remove'>
+													<a class='btn btn-small' rel='tooltip' data-placement='top' data-original-title='detail'>
+														<i idz='$r[id_pekerja]' namez='$r[nama_pekerja]' >
 															hapus
 														</i>
 													</a> 

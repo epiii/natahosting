@@ -2,11 +2,11 @@
 	include"lib/koneks.php";
 	include"lib/pagination_class.php";
  
- 	$aksi 	= $_GET['aksi'];
-	$menu	= $_GET['menu'];
-	$page 	= $_GET['page'];
-	$cari	= $_GET['cari'];
-	$tabel 	= $_GET['tabel'];
+ 	$aksi 	= isset($_GET['aksi'])?$_GET['aksi']:'';
+ 	$page 	= isset($_GET['page'])?$_GET['page']:'';
+ 	$cari 	= isset($_GET['cari'])?$_GET['cari']:'';
+ 	$tabel 	= isset($_GET['tabel'])?$_GET['tabel']:'';
+ 	$menu 	= isset($_GET['menu'])?$_GET['menu']:'';
 	
 	function anti_injection($data){
 	  $filter = mysql_real_escape_string(stripslashes(strip_tags(htmlspecialchars($data,ENT_QUOTES))));
@@ -571,8 +571,8 @@
 							 }
 							 echo "<tr><td colspan=7>".$obj->anchors."</td></tr>";
 							 echo "<tr><td colspan=7>".$obj->total."</td></tr>";
-								
 					break;
+					
 					case 'suser':
 							if (isset($_GET['nama_bagian']) and !empty($_GET['nama_bagian'])){
 								$nama_bagian= $_GET['nama_bagian'];
@@ -603,9 +603,6 @@
 								while($sbagianx = mysql_fetch_array($result)){
 									echo"
 										<tr id='bagian_$sbagianx[username]'>
-											<td><label class='checkbox '>
-											<input type='checkbox' id='CB$sbagianx[username]'>
-											</label></td>
 											
 											<td class='to_hide_phone'> $nox </td>
 											<td class='to_hide_phone'> $sbagianx[username]</td>
@@ -630,7 +627,7 @@
 													</a> 
 													<a  class='btn target='_blank' btn-small' rel='tooltip' data-placement='bottom' 
 														data-original-title='hapus'>
-														<i idz='$sbagianx[username]' namaz='$sbagianx[nama_bagian]'
+														<i idz='$sbagianx[username]' namaz='$sbagianx[nama_lengkap]'
 														class='gicon-remove'>
 															hapus
 														</i>
@@ -681,9 +678,6 @@
 								while($shiftx = mysql_fetch_array($result)){
 									echo"
 										<tr id='shift_$shiftx[id_shiftkerja]'>
-											<td><label class='checkbox '>
-											<input type='checkbox' id='CB$shiftx[id_shiftkerja]'>
-											</label></td>
 											
 											<td class='to_hide_phone'> $nox </td>
 											<td class='to_hide_phone'> $shiftx[nama_shiftkerja]</td>
